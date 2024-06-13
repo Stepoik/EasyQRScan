@@ -27,7 +27,7 @@ fun MainView() {
         if (scannerVisible) {
             ScannerWithPermissions(
                 modifier = Modifier.padding(16.dp),
-                onScanned = { println(it); true }, types = listOf(CodeType.QR)
+                onScanned = { println(it); true }, isScanRequired = scannerVisible, types = listOf(CodeType.QR)
             )
         }
     }

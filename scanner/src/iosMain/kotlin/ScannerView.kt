@@ -52,13 +52,16 @@ fun UiScannerView(
     modifier: Modifier = Modifier,
     // https://developer.apple.com/documentation/avfoundation/avmetadataobjecttype?language=objc
     allowedMetadataTypes: List<AVMetadataObjectType> = listOf(AVMetadataObjectTypeQRCode),
-    onScanned: (String) -> Boolean
+    onScanned: (String) -> Boolean,
+    isScanRequired: Boolean
 ) {
     val coordinator = remember {
         ScannerCameraCoordinator(
             onScanned = onScanned
         )
     }
+
+    coordinator.scanRequired = isScanRequired
 
     DisposableEffect(Unit) {
         val listener = OrientationListener { orientation ->
@@ -108,6 +111,15 @@ class ScannerCameraCoordinator(
 
     private var previewLayer: AVCaptureVideoPreviewLayer? = null
     lateinit var captureSession: AVCaptureSession
+
+    private var isScanRequired = true
+    var scanRequired get() = isScanRequired
+        set(value) {
+            isScanRequired = value
+            if (isScanRequired) {
+                startScanning()
+            } else captureSession.stopRunning()
+        }
 
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
     fun prepare(layer: CALayer, allowedMetadataTypes: List<AVMetadataObjectType>) {
@@ -168,9 +180,7 @@ class ScannerCameraCoordinator(
         }
 
         println("Launching capture session")
-        GlobalScope.launch(Dispatchers.Default) {
-            captureSession.startRunning()
-        }
+        startScanning()
     }
 
 
@@ -197,11 +207,12 @@ class ScannerCameraCoordinator(
     fun onFound(code: String) {
         // kSystemSoundID_UserPreferredAlert = 0x00001000
         AudioServicesPlaySystemSound(0x1000u) // Mail-Sound 1108 wäre der Photo Sound
-        captureSession.stopRunning()
-        if (!onScanned(code)) {
-            GlobalScope.launch(Dispatchers.Default) {
-                captureSession.startRunning()
-            }
+        onScanned(code)
+    }
+
+    private fun startScanning() {
+        GlobalScope.launch(Dispatchers.Default) {
+            captureSession.startRunning()
         }
     }
 

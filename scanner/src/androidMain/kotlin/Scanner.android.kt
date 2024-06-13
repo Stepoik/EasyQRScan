@@ -18,11 +18,13 @@ import com.google.accompanist.permissions.rememberPermissionState
 actual fun Scanner(
     modifier: Modifier,
     onScanned: (String) -> Boolean,
+    isScanRequired: Boolean,
     types: List<CodeType>
 ) {
     val analyzer = remember() {
         BarcodeAnalyzer(types.toFormat(), onScanned)
     }
+    analyzer.scanRequired = isScanRequired
     CameraView(modifier, analyzer)
 }
 

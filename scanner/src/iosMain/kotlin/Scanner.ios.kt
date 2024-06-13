@@ -20,13 +20,15 @@ import platform.UIKit.UIApplicationOpenSettingsURLString
 actual fun Scanner(
     modifier: Modifier,
     onScanned: (String) -> Boolean, // return true to abort scanning
+    isScanRequired: Boolean,
     types: List<CodeType>
 ) {
     UiScannerView(
         modifier = modifier,
         onScanned = {
             onScanned(it)
-        }
+        },
+        isScanRequired = isScanRequired
     )
 }
 

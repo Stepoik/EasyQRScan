@@ -18,27 +18,32 @@ class BarcodeAnalyzer(
         .build()
 
     private val scanner = BarcodeScanning.getClient(options)
+    private var isScanRequired = true
+    var scanRequired get() = isScanRequired
+        set(value) {
+            isScanRequired = value
+        }
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun analyze(imageProxy: ImageProxy) {
         imageProxy.image?.let { image ->
-            scanner.process(
-                InputImage.fromMediaImage(
-                    image, imageProxy.imageInfo.rotationDegrees
-                )
-            ).addOnSuccessListener { barcode ->
-                barcode?.takeIf { it.isNotEmpty() }
-                    ?.mapNotNull { it.rawValue }
-                    ?.joinToString(",")
-                    ?.let {
+            if (isScanRequired) {
+                scanner.process(
+                    InputImage.fromMediaImage(
+                        image, imageProxy.imageInfo.rotationDegrees
+                    )
+                ).addOnSuccessListener { barcode ->
+                    barcode?.takeIf { it.isNotEmpty() }
+                        ?.mapNotNull { it.rawValue }
+                        ?.joinToString(",")
+                        ?.let {
 //                        Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-                        if (onScanned(it)) {
-                            scanner.close()
+                            onScanned(it)
                         }
-                    }
-            }.addOnCompleteListener {
-                imageProxy.close()
-            }
+                }.addOnCompleteListener {
+                    imageProxy.close()
+                }
+            } else imageProxy.close()
         }
     }
 }

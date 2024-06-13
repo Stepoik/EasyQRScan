@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 actual fun Scanner(
     modifier: Modifier,
     onScanned: (String) -> Boolean,
+    isScanRequired: Boolean,
     types: List<CodeType>
 ) {
     Text("Scanner not implemented for JVM")

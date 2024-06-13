@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 expect fun Scanner(
     modifier: Modifier = Modifier,
     onScanned: (String) -> Boolean,
+    isScanRequired: Boolean,
     types: List<CodeType>
 )
 
@@ -23,6 +24,7 @@ fun ScannerWithPermissions(
     modifier: Modifier = Modifier.clipToBounds(),
     onScanned: (String) -> Boolean,
     types: List<CodeType>,
+    isScanRequired: Boolean,
     permissionText: String = "Camera is required for QR Code scanning",
     openSettingsLabel: String = "Open Settings",
 ) {
@@ -30,6 +32,7 @@ fun ScannerWithPermissions(
         modifier = modifier,
         onScanned = onScanned,
         types = types,
+        isScanRequired = isScanRequired,
         permissionDeniedContent = { permissionState ->
             Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
@@ -49,6 +52,7 @@ fun ScannerWithPermissions(
     modifier: Modifier = Modifier,
     onScanned: (String) -> Boolean,
     types: List<CodeType>,
+    isScanRequired: Boolean,
     permissionDeniedContent: @Composable (CameraPermissionState) -> Unit,
 ) {
     val permissionState = rememberCameraPermissionState()
@@ -60,7 +64,7 @@ fun ScannerWithPermissions(
     }
 
     if (permissionState.status == CameraPermissionStatus.Granted) {
-        Scanner(modifier, types = types, onScanned = onScanned)
+        Scanner(modifier, types = types, isScanRequired = isScanRequired, onScanned = onScanned)
     } else {
         permissionDeniedContent(permissionState)
     }

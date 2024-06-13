@@ -74,24 +74,24 @@ class MavenCentralPublishConventionPlugin : Plugin<Project> {
                 }
             }
 
-            extensions.configure<SigningExtension> {
-                useInMemoryPgpKeys(
-                    getLocalProperty("SIGNING_KEY_ID") ?: System.getenv("SIGNING_KEY_ID"),
-                    getLocalProperty("SIGNING_KEY") ?: System.getenv("SIGNING_KEY"),
-                    getLocalProperty("SIGNING_KEY_PASSWORD") ?: System.getenv("SIGNING_KEY_PASSWORD"),
-                )
-                val publishing = extensions.getByType<PublishingExtension>()
-                sign(publishing.publications)
-            }
-
-
-            //region Fix Gradle warning about signing tasks using publishing task outputs without explicit dependencies
-            // https://github.com/gradle/gradle/issues/26091
-            tasks.withType<AbstractPublishToMaven>().configureEach {
-                val signingTasks = tasks.withType<Sign>()
-                mustRunAfter(signingTasks)
-            }
-            //endregion
+//            extensions.configure<SigningExtension> {
+//                useInMemoryPgpKeys(
+//                    getLocalProperty("SIGNING_KEY_ID") ?: System.getenv("SIGNING_KEY_ID"),
+//                    getLocalProperty("SIGNING_KEY") ?: System.getenv("SIGNING_KEY"),
+//                    getLocalProperty("SIGNING_KEY_PASSWORD") ?: System.getenv("SIGNING_KEY_PASSWORD"),
+//                )
+//                val publishing = extensions.getByType<PublishingExtension>()
+//                sign(publishing.publications)
+//            }
+//
+//
+//            //region Fix Gradle warning about signing tasks using publishing task outputs without explicit dependencies
+//            // https://github.com/gradle/gradle/issues/26091
+//            tasks.withType<AbstractPublishToMaven>().configureEach {
+//                val signingTasks = tasks.withType<Sign>()
+//                mustRunAfter(signingTasks)
+//            }
+//            //endregion
         }
     }
 }

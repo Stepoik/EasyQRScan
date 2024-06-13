@@ -38,3 +38,11 @@ kotlin {
         }
     }
 }
+
+publishing {
+    repositories {
+        maven {
+            mavenLocal()
+        }
+    }
+}
